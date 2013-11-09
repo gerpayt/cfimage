@@ -39,7 +39,7 @@ class SiteController extends Controller
 		// using the default layout 'protected/views/layouts/main.php'
 		$dataProvider=new CActiveDataProvider('Folder', array(
 			'criteria'=>array(
-				'order'=>'createtime DESC',
+				'order'=>'id DESC',
 			),
 			'pagination'=>array(
 				'pageSize'=>15,

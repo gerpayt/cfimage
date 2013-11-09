@@ -54,12 +54,12 @@ class ImageController extends Controller
 		if(Yii::app()->user->name=='admin' || $model->foldera->private == 0 || ($model->foldera->private == 1 && $session['auth_folder_'.$model->folder]))
 		{
 			$prev=IMage::model()->find(array(
-					'condition'=>'createtime>'.$model->createtime.' AND folder='.$model->folder,
-					'order'=>'createtime ASC',
+					'condition'=>'id>'.$id.' AND folder='.$model->folder,
+					'order'=>'id ASC',
 				));
 			$next=Image::model()->find(array(
-					'condition'=>'createtime<'.$model->createtime.' AND folder='.$model->folder,
-					'order'=>'createtime DESC',
+					'condition'=>'id<'.$id.' AND folder='.$model->folder,
+					'order'=>'id DESC',
 				));
 			$url['folder']=CHtml::normalizeUrl(array('folder/view','id'=>$model->folder));
 			$url['prev']=$prev?CHtml::normalizeUrl(array('image/view','id'=>$prev->id)):'';
@@ -181,12 +181,20 @@ class ImageController extends Controller
 	 */
 	public function actionDownload($id)
 	{
+		$session = Yii::app()->session;
 		$model=$this->loadModel($id);
-		if($model===null)
-			throw new CHttpException(404,'The requested page does not exist.');
-		header('Content-type: application/octet-stream ');
-		header('Content-Disposition: attachment; filename='.$model->title);
-		echo file_get_contents(dirname(Yii::app()->BasePath).'/'.Yii::app()->params['image_dir'].'/'.$model->filename);
+		if(Yii::app()->user->name=='admin' || $model->foldera->private == 0 || ($model->foldera->private == 1 && $session['auth_folder_'.$model->folder]))
+		{
+			if($model===null)
+				throw new CHttpException(404,'The requested page does not exist.');
+			header('Content-type: application/octet-stream ');
+			header('Content-Disposition: attachment; filename='.$model->title);
+			echo file_get_contents(dirname(Yii::app()->BasePath).'/'.Yii::app()->params['image_dir'].'/'.$model->filename);
+		}
+		else
+		{
+			$this->redirect(array('/folder/view','id'=>$model->folder));
+		}
 	}
 
 	/**

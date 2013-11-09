@@ -28,3 +28,7 @@ Make these dirs writable
 /protected/runtime
 /upload
 
+Changelog
+---------
+1.change order by createtime to id
+2.check permission when download a image

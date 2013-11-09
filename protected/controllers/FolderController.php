@@ -52,12 +52,12 @@ class FolderController extends Controller
 		$session = Yii::app()->session;
 		$model=$this->loadModel($id);
 		$prev=Folder::model()->find(array(
-				'condition'=>'createtime>'.$model->createtime,
-				'order'=>'createtime ASC',
+				'condition'=>'id>'.$id,
+				'order'=>'id ASC',
 			));
 		$next=Folder::model()->find(array(
-				'condition'=>'createtime<'.$model->createtime,
-				'order'=>'createtime DESC',
+				'condition'=>'id<'.$id,
+				'order'=>'id DESC',
 			));
 		$url['home']=CHtml::normalizeUrl(array('/'));
 		$url['prev']=$prev?CHtml::normalizeUrl(array('folder/view','id'=>$prev->id)):'';
@@ -67,7 +67,7 @@ class FolderController extends Controller
 			$dataProvider=new CActiveDataProvider('Image', array(
 				'criteria'=>array(
 					'condition'=>'folder='.$id,
-					'order'=>'createtime DESC',
+					'order'=>'id DESC',
 				),
 				'pagination'=>array(
 					'pageSize'=>15,
@@ -214,12 +214,34 @@ class FolderController extends Controller
 
 	public function actionUpload($id)
 	{
-		$fn = (isset($_SERVER['HTTP_X_FILENAME']) ? $_SERVER['HTTP_X_FILENAME'] : false);
-		$title = (isset($_SERVER['HTTP_X_TITLE']) ? $_SERVER['HTTP_X_TITLE'] : false);
-		$description = (isset($_SERVER['HTTP_X_DESCRIPTION']) ? $_SERVER['HTTP_X_DESCRIPTION'] : false);
-		if ($fn) {
+		//$post_content=file_get_contents('php://input');
+		$file_content=file_get_contents('php://input');
+		
+		if ($file_content) {
+			//$part1index = strpos($post_content,"\n");
+			//$title = base64_decode(substr($post_content,0,$part1index));
+			//$part1index += 1;
+
+			//$part2index = strpos($post_content,"\n",$part1index);
+			//$description = base64_decode(substr($post_content,$part1index,$part2index-$part1index));
+			//$part2index += 1;
+
+			//$part3index = strpos($post_content,"\n",$part2index);
+			//$fn = base64_decode(substr($post_content,$part2index,$part3index-$part2index));
+			//$part3index += 1;
+
+			//$file_content=base64_decode(substr($post_content,$part3index));
+
+			//echo $title."\n";
+			//echo $description."\n";
+			//echo $fn."\n";
+			//echo $file_content;
+
+			$title = $_GET['title'];
+			$description = $_GET['description'];
+			$fn = $_GET['filename'];
 			$filename=time().rand(1000,9999).'.'.strtolower(pathinfo($fn, PATHINFO_EXTENSION));
-			$file_content=file_get_contents('php://input');
+			
 			$model=new Image;
 			$model->title=$title;
 			$model->folder=$id;
